@@ -6,6 +6,8 @@ import carRoutes from "./routes/carRoutes.js";
 import errorHandler from "./middleware/errorHandler.js";
 import contactRoutes from "./routes/contactRoutes.js";
 import rateLimit from "express-rate-limit";
+import authRoutes from "./routes/authRoutes.js";
+import wishlistRoutes from "./routes/wishlistRoutes.js";
 
 dotenv.config();
 
@@ -27,7 +29,9 @@ mongoose
   .catch((err) => console.error("MongoDB error:", err));
 
 app.use("/api/cars", carRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api/contact", contactRoutes);
+app.use("/api/wishlist", wishlistRoutes);
 
 app.get("/", (req, res) => {
   res.send("CarBazaar API is running");
