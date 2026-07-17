@@ -5,7 +5,7 @@ import { uploadToCloudinary } from "../middleware/upload.js";
 // @route GET /api/cars
 export const getCars = async (req, res, next) => {
   try {
-    const { brand, fuelType, transmission, category, minPrice, maxPrice, q, featured } = req.query;
+    const { brand, fuelType, transmission, category, minPrice, maxPrice, q, featured ,  vehicleType,} = req.query;
 
     const filter = {};
 
@@ -13,6 +13,8 @@ export const getCars = async (req, res, next) => {
     if (fuelType && fuelType !== "all") filter.fuelType = fuelType;
     if (transmission && transmission !== "all") filter.transmission = transmission;
     if (category && category !== "all") filter.category = category;
+    if (vehicleType && vehicleType !== "all")
+  filter.vehicleType = vehicleType;
     if (featured) filter.featured = featured === "true";
     if (minPrice || maxPrice) {
       filter.price = {};
@@ -51,19 +53,26 @@ export const getCarById = async (req, res, next) => {
 // @route POST /api/cars
 export const createCar = async (req, res, next) => {
   try {
-    const carData = { ...req.body };
+    const carData = {
+      ...req.body,
+     owner: req.user.id
+    };
 
-    // Images Cloudinary pe upload karo
+    // Upload images to Cloudinary
     if (req.files && req.files.length > 0) {
       const imageUrls = await Promise.all(
         req.files.map((file) => uploadToCloudinary(file.buffer))
       );
+
       carData.images = imageUrls;
     }
 
-    const car = new Car(carData);
-    await car.save();
-    res.status(201).json({ success: true, data: car });
+    const newCar = await Car.create(carData);
+
+    res.status(201).json({
+      success: true,
+      data: newCar,
+    });
   } catch (error) {
     next(error);
   }

@@ -99,7 +99,7 @@ const carSchema = new mongoose.Schema(
         message: "At least 3 photo is required",
       },
     },
-  category: {
+category: {
   type: String,
   required: [true, "Category is required"],
   enum: {
@@ -115,9 +115,22 @@ const carSchema = new mongoose.Schema(
     message: "{VALUE} is not a valid category",
   },
 },
-    featured: { type: Boolean, default: false },
-  },
-  { timestamps: true }
+
+featured: { 
+  type: Boolean, 
+  default: false 
+},
+
+owner: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "User",
+  required: true
+},
+
+},
+{ 
+  timestamps: true 
+}
 );
 
 export default mongoose.model("Car", carSchema);
