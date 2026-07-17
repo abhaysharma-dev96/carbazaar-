@@ -4,12 +4,22 @@ const currentYear = new Date().getFullYear();
 
 const carSchema = new mongoose.Schema(
   {
+    vehicleType: {
+  type: String,
+  required: true,
+  enum: {
+    values: ["car", "bike"],
+    message: "{VALUE} is not a valid vehicle type",
+  },
+  default: "car",
+},
     brand: {
       type: String,
       required: [true, "Brand is required"],
       trim: true,
       minlength: [2, "Brand must be at least 2 characters"],
     },
+
     model: {
       type: String,
       required: [true, "Model is required"],
@@ -38,7 +48,13 @@ const carSchema = new mongoose.Schema(
       type: String,
       required: [true, "Fuel type is required"],
       enum: {
-        values: ["Petrol", "Diesel", "CNG", "Electric", "Hybrid"],
+       values: [
+  "Petrol",
+  "Diesel",
+  "CNG",
+  "Electric",
+  "Hybrid",
+],
         message: "{VALUE} is not a valid fuel type",
       },
     },
@@ -46,7 +62,7 @@ const carSchema = new mongoose.Schema(
       type: String,
       required: [true, "Transmission is required"],
       enum: {
-        values: ["Manual", "Automatic"],
+        values: ["Manual", "Automatic", "CVT"],
         message: "{VALUE} is not a valid transmission type",
       },
     },
@@ -79,18 +95,26 @@ const carSchema = new mongoose.Schema(
     images: {
       type: [String],
       validate: {
-        validator: (arr) => arr.length >= 1,
-        message: "At least 1 photo is required",
+        validator: (arr) => arr.length >= 3,
+        message: "At least 3 photo is required",
       },
     },
-    category: {
-      type: String,
-      required: [true, "Category is required"],
-      enum: {
-        values: ["suv", "sedan", "hatchback"],
-        message: "{VALUE} is not a valid category",
-      },
-    },
+  category: {
+  type: String,
+  required: [true, "Category is required"],
+  enum: {
+    values: [
+      "suv",
+      "sedan",
+      "hatchback",
+      "sports-bike",
+      "cruiser",
+      "scooter",
+      "commuter",
+    ],
+    message: "{VALUE} is not a valid category",
+  },
+},
     featured: { type: Boolean, default: false },
   },
   { timestamps: true }

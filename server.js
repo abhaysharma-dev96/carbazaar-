@@ -8,6 +8,7 @@ import contactRoutes from "./routes/contactRoutes.js";
 import rateLimit from "express-rate-limit";
 import authRoutes from "./routes/authRoutes.js";
 import wishlistRoutes from "./routes/wishlistRoutes.js";
+import Car from "./models/Car.js";
 
 dotenv.config();
 
