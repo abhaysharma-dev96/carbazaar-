@@ -37,14 +37,36 @@ export const getCars = async (req, res, next) => {
 
 // @desc  Get single car
 // @route GET /api/cars/:id
+// export const getCarById = async (req, res, next) => {
+//   try {
+//     const car = await Car.findById(req.params.id);
+//     if (!car) {
+//       return res.status(404).json({ success: false, message: "Car not found" });
+//     }
+//     res.json({ success: true, data: car });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 export const getCarById = async (req, res, next) => {
   try {
     const car = await Car.findById(req.params.id);
+
+    console.log(car);
+
     if (!car) {
-      return res.status(404).json({ success: false, message: "Car not found" });
+      return res.status(404).json({
+        success: false,
+        message: "Car not found",
+      });
     }
-    res.json({ success: true, data: car });
+
+    res.json({
+      success: true,
+      data: car,
+    });
   } catch (error) {
+    console.log(error);
     next(error);
   }
 };
@@ -80,13 +102,32 @@ export const createCar = async (req, res, next) => {
 
 // @desc  Delete car
 // @route DELETE /api/cars/:id
+// @desc Delete car
+// @route DELETE /api/cars/:id
 export const deleteCar = async (req, res, next) => {
   try {
-    const car = await Car.findByIdAndDelete(req.params.id);
+    const car = await Car.findById(req.params.id);
+
     if (!car) {
-      return res.status(404).json({ success: false, message: "Car not found" });
+      return res.status(404).json({
+        success: false,
+        message: "Car not found",
+      });
     }
-    res.json({ success: true, message: "Car deleted successfully" });
+
+    if (car.owner.toString() !== req.user.id) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to delete this listing",
+      });
+    }
+
+    await car.deleteOne();
+
+    res.json({
+      success: true,
+      message: "Car deleted successfully",
+    });
   } catch (error) {
     next(error);
   }
@@ -95,10 +136,21 @@ export const deleteCar = async (req, res, next) => {
 // @route PUT /api/cars/:id
 export const updateCar = async (req, res, next) => {
   try {
-    const car = await Car.findById(req.params.id);
-    if (!car) {
-      return res.status(404).json({ success: false, message: "Car not found" });
-    }
+   const car = await Car.findById(req.params.id);
+
+if (!car) {
+  return res.status(404).json({
+    success: false,
+    message: "Car not found",
+  });
+}
+
+if (car.owner.toString() !== req.user.id) {
+  return res.status(403).json({
+    success: false,
+    message: "Not authorized to edit this listing",
+  });
+}
 
     const updateData = { ...req.body };
 
